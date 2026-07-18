@@ -9,7 +9,7 @@ public class Rectangle extends Figure {
     private int b;
     
     public Rectangle(int x, int y, Color color, int a, int b, String id){
-        super(x,y,color, id);
+        super(x,y,color, id,a,b,1.0);
         this.a =a;
         this.b=b;
         setSize(a, b);

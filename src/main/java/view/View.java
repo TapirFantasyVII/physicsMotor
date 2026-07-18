@@ -1,18 +1,14 @@
 package view;
 
 import forms.*;
+import model.FigureListener;
 import model.Model;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class View extends JFrame {
-
-    private static final int INFO_PANEL_WIDTH = 450;
-    private static final int CONSOLE_HEIGHT = 180;
-
-    private int gridWidth;
-    private int gridHeight;
+public class View extends JFrame implements FigureListener {
+ 
     private Model model;
 
     
@@ -24,18 +20,16 @@ public class View extends JFrame {
     private JTextArea figureInfoArea;
     private JScrollPane figureInfoScroll;
 
-    public View(Model model, int gridWidth, int gridHeight) {
+    public View(Model model ) {
         this.model = model;
-        this.gridWidth = gridWidth;
-        this.gridHeight = gridHeight;
-        int delay = 16; //60 FPS
-
+ 
         initComponents();
         setupLayout();
+        model.addFigureListener(this);
 
         setTitle("Circulo MVC");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(gridWidth, gridHeight);
+        setSize(ViewConfig.GRIDWIDTH, ViewConfig.GRIDHEIGHT);
         setLocationRelativeTo(null);
 
     }
@@ -48,7 +42,7 @@ public class View extends JFrame {
   
         infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, gridHeight));
+        infoPanel.setPreferredSize(new Dimension(ViewConfig.INFO_PANEL_WIDTH, ViewConfig.GRIDHEIGHT));
         infoPanel.setBackground(new Color(240, 240, 240));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -78,14 +72,15 @@ public class View extends JFrame {
         setVisible(true);
     }
 
-    private void drawAll() {
-        for (Figure f : model.getFigures()) {
-            canvas.add(f);
-        }
+    @Override
+    public void onFigureAdded(Figure figure) {
+        System.out.println("onFigureAdded: " + figure); 
+        canvas.add(figure);
+        canvas.revalidate();
+        canvas.repaint(); 
     }
-
-    public void repaint(){
-        drawAll();
+ 
+    public void render(){ 
         updateInfo();  
     }
     // -------------------------------------------------------------------------

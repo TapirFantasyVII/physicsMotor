@@ -17,7 +17,7 @@ public class Triangle extends Figure{
     
     
      public Triangle(int x, int y, Color color, int ancho, int alto, String id) {
-      super(x, y, color, id);
+      super(x, y, color, id,ancho, alto, 1.0);
       this.ancho = ancho;
       this.alto = alto;
       setSize(ancho, alto);

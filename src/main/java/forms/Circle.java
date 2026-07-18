@@ -7,7 +7,7 @@ public class Circle extends Figure {
     private int radio;
     
     public Circle(int x, int y, Color color, int radio, String id){
-        super(x,y,color, id);
+        super(x,y,color, id, radio*2, radio*2, 1.0);
         this.radio =radio;
         setSize(radio * 2, radio * 2);
         
