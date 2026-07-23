@@ -10,10 +10,10 @@ public abstract class Figure extends JPanel {
 
     private Color color;
     private String id;
-    protected final Body body;
+    protected Body body;
 
-    public Figure(int x, int y, Color color, String id, double width, double height, double mass) {
-        this.body = new Body(x, y, width, height, mass);
+    public Figure(int x, int y, Color color, String id) {
+        this.body = null;
         this.id = id;
         this.color = color;
         setLocation(x, y);
@@ -36,18 +36,37 @@ public abstract class Figure extends JPanel {
     }
 
     public void applyFriction() {
-        body.applyFriction(PhysicsConfig.GROUND_FRICTION, PhysicsConfig.AIR_FRICTION);
+        body.applyFriction();
     }
 
     private void syncViewPosition() {
         setLocation((int) Math.round(body.getX()), (int) Math.round(body.getY()));
     }
 
-    public double getMass() { return body.getMass(); }
-    public Body getBody() { return body; }
+    public void resolveCollision(Figure other) {
+        if (other != this) {
+            body.resolveCollision(other.getBody());
+            this.syncViewPosition();
+            other.syncViewPosition();
+        }
 
-    public Color getColor() { return color; }
-    public void setColor(Color color) { this.color = color; }
+    }
+
+    public double getMass() {
+        return body.getMass();
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
     @Override
     public String toString() {

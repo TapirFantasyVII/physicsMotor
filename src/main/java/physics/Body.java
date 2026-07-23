@@ -1,6 +1,6 @@
 package physics;
 
-public class Body {
+public abstract class Body {
 
     private Vector2d position;
     private Vector2d velocity = Vector2d.zero();
@@ -11,11 +11,14 @@ public class Body {
     private double mass;
     private boolean grounded = false;
 
-    public Body(double x, double y, double width, double height, double mass) {
+    World world; // pertenece a un mundo
+
+    public Body(World world, double x, double y, double width, double height, double mass) {
         this.position = new Vector2d(x, y);
         this.width = width;
         this.height = height;
         this.mass = mass;
+        this.world = world;
     }
 
     public void applyForce(Vector2d f) {
@@ -54,23 +57,56 @@ public class Body {
         grounded = (position.y + height >= worldHeight - epsilon);
     }
 
-    public void applyFriction(double groundFriction, double airFriction) {
+    public void applyFriction() {
         if (grounded) {
-            double frictionForceX = -velocity.x * groundFriction;
+            double frictionForceX = -velocity.x * world.getGroundFriction();
             applyForce(new Vector2d(frictionForceX, 0));
             if (Math.abs(velocity.x) < 0.5) {
                 velocity.x = 0;
             }
         } else {
-            applyForce(velocity.scale(-airFriction));
+            applyForce(velocity.scale(world.getAirFriction()));
         }
     }
 
     // getters
-    public double getX() { return position.x; }
-    public double getY() { return position.y; }
-    public Vector2d getPosition() { return position; }
-    public double getMass() { return mass; }
-    public boolean isGrounded() { return grounded; }
-    public void setSize(double width, double height) { this.width = width; this.height = height; }
+    public double getX() {
+        return position.x;
+    }
+
+    public double getY() {
+        return position.y;
+    }
+
+    public Vector2d getPosition() {
+        return position;
+    }
+
+    public Vector2d getVelocity() {
+        return velocity;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public boolean isGrounded() {
+        return grounded;
+    }
+
+    public void setSize(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public void setVelocity(Vector2d velocity) {
+        this.velocity = velocity;
+    }
+
+    public void translate(double dx, double dy) {
+        this.position = position.add(new Vector2d(dx, dy));
+    }
+
+    public void resolveCollision(Body other) {
+    }
 }
