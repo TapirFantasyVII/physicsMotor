@@ -1,13 +1,13 @@
 package controller;
 
+import java.awt.Color;
+
 public interface ToolPanelListener {
 
-    void onAddCircle();
-
-    void onDeleteMode();
-
-    void onModifyMode();
-
-    void onWorldSettings();
+    void onCreateCircle(
+            int radius,
+            double mass,
+            Color color
+    );
 
 }

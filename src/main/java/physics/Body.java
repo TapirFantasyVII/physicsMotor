@@ -65,7 +65,7 @@ public abstract class Body {
                 velocity.x = 0;
             }
         } else {
-            applyForce(velocity.scale(world.getAirFriction()));
+            applyForce(velocity.scale(-world.getAirFriction()));
         }
     }
 

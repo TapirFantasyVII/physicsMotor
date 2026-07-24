@@ -9,9 +9,9 @@ import physics.World;
 public class Circle extends Figure {
     private int radio;
 
-    public Circle(World world, int x, int y, Color color, int radio, String id) {
+    public Circle(World world, int x, int y, Color color, int radio, double weight , String id) {
         super(x, y, color, id);
-        this.body = new CircleBody(world, x, y, radio, 1.0);
+        this.body = new CircleBody(world, x, y, radio, weight);
         this.radio = radio;
         setSize(radio * 2, radio * 2);
 

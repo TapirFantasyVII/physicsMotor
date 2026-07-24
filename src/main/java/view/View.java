@@ -27,7 +27,7 @@ public class View extends JFrame implements FigureListener {
 
         setTitle("Motor 2D");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(ViewConfig.GRIDWIDTH, ViewConfig.GRIDHEIGHT);
+        //setSize(ViewConfig.GRIDWIDTH, ViewConfig.GRIDHEIGHT);
         setLocationRelativeTo(null);
 
         setLayout(new BorderLayout());
@@ -38,6 +38,7 @@ public class View extends JFrame implements FigureListener {
     }
 
     public void mostrar() {
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
     }
 
@@ -61,4 +62,9 @@ public class View extends JFrame implements FigureListener {
     public int getCanvasHeight() {
         return canvas.getHeight();
     }
+
+    public ToolPanel getToolPanel() {
+        return toolPanel;
+    }
+    
 }

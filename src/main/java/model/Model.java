@@ -1,5 +1,6 @@
 package model;
 
+import controller.Tool;
 import forms.*;
 import java.awt.Color;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ public class Model {
     private final List<Figure> figures;
     private final List<FigureListener> listeners;
     World world;
+    private Tool currentTool = Tool.NONE;
 
     private int figureCnt = 0;
     int animation = 0;
@@ -22,10 +24,12 @@ public class Model {
     }
 
     public void setupDemo() {
-        addCircle(0, 200, 80);
-        figures.get(0).applyForce(new Vector2d(-5000, -20000));
-        addCircle(50, 100, 80);
-        figures.get(0).setColor(Color.RED);
+ 
+        addCircle(100, 100,Color.GREEN ,40, 1.0);
+        addCircle(300, 150,Color.RED ,40, 1.0);
+ 
+        figures.get(0).applyForce(new Vector2d(5000, -20000));
+        figures.get(1).applyForce(new Vector2d(-5000, -20000));
     }
 
     public void actEstate(double dt) {
@@ -71,8 +75,11 @@ public class Model {
      * }
      */
 
-    public void addCircle(int posX, int posY, int tam) {
-        addFigure(new Circle(world, posX, posY, Color.yellow, tam, "circle_" + figureCnt));
+    public void addCircle(int posX, int posY, Color color ,int rad, double weight) {
+        addFigure(
+                new Circle(world, posX, posY, color,
+                           rad, weight , "circle_" + figureCnt)
+                 );
     }
 
     public List<Figure> getFigures() {
@@ -85,5 +92,14 @@ public class Model {
 
     public World getWorld() {
         return world;
+    }
+
+
+    public void setCurrentTool(Tool tool) {
+        this.currentTool = tool;
+    }
+
+    public Tool getCurrentTool() {
+        return currentTool;
     }
 }
