@@ -54,11 +54,20 @@ public class CircleBody extends Body {
             nx = dx / distance;
             ny = dy / distance;
         }
+        // Corrección de penetración (Position Correction)
+        // Evita vibraciones corrigiendo solo una parte del solapamiento.
 
         double overlap = sumRadii - distance;
+
+        double slop = 0.01;      // Penetración permitida
+        double percent = 0.8;    // Corregir solo el 80%
+
+        double correction = Math.max(overlap - slop, 0.0) * percent;
+
         double totalMass = this.getMass() + other.getMass();
-        double moveThis = overlap * (other.getMass() / totalMass);
-        double moveOther = overlap * (this.getMass() / totalMass);
+
+        double moveThis = correction * (other.getMass() / totalMass);
+        double moveOther = correction * (this.getMass() / totalMass);
 
         this.translate(-nx * moveThis, -ny * moveThis);
         other.translate(nx * moveOther, ny * moveOther);
@@ -70,10 +79,17 @@ public class CircleBody extends Body {
         double rvy = v2.y - v1.y;
         double velAlongNormal = rvx * nx + rvy * ny;
 
-        if (velAlongNormal > 0)
+        if (velAlongNormal > 0) {
             return;
+        }
 
         double restitution = world.getRestitution();
+
+// Si el impacto es muy pequeño, no rebotar.
+        if (Math.abs(velAlongNormal) < 0.5) {
+            restitution = 0.0;
+        }
+
         double j = -(1 + restitution) * velAlongNormal;
         j /= (1 / this.getMass() + 1 / other.getMass());
 

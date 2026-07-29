@@ -1,6 +1,5 @@
 package view.toolutils;
 
-import controller.Tool;
 import controller.ToolPanelListener;
 
 import javax.swing.*;

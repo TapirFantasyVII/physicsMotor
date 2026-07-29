@@ -1,6 +1,6 @@
 package view;
 
-import controller.Tool;
+import controller.EditorModeListener;
 import controller.ToolPanelListener;
 import view.toolutils.*;
 
@@ -9,7 +9,8 @@ import java.awt.*;
 
 public class ToolPanel extends JPanel {
 
-    private ToolPanelListener listener;
+    private ToolPanelListener toolListener;
+    private EditorModeListener modeListener;
 
     private final AddPanel addPanel;
 
@@ -50,38 +51,46 @@ public class ToolPanel extends JPanel {
         add(toolbar, BorderLayout.NORTH);
         add(contentPanel, BorderLayout.CENTER);
 
-        addButton.addActionListener(e -> cards.show(contentPanel, ADD));
+        addButton.addActionListener(e -> {
+
+            cards.show(contentPanel, ADD);
+            if (modeListener != null) {
+                modeListener.onAddMode();
+            }
+        });
 
         deleteButton.addActionListener(e -> {
             cards.show(contentPanel, DELETE);
 
-            if (listener != null) {
-         //       listener.onToolSelected(Tool.DELETE);
+            if (modeListener != null) {
+                modeListener.onDeleteMode();
             }
         });
 
         modifyButton.addActionListener(e -> {
             cards.show(contentPanel, MODIFY);
 
-            if (listener != null) {
-         //       listener.onToolSelected(Tool.MODIFY);
+            if (modeListener != null) {
+                modeListener.onModifyMode();
             }
         });
 
         worldButton.addActionListener(e -> {
             cards.show(contentPanel, WORLD);
 
-            if (listener != null) {
-        //        listener.onToolSelected(Tool.WORLD_SETTINGS);
+            if (modeListener != null) {
+                modeListener.onModifyWorld();
             }
         });
 
         cards.show(contentPanel, ADD);
-
+        
     }
 
-    public void setToolPanelListener(ToolPanelListener listener) {
-        this.listener = listener;
-        addPanel.setToolPanelListener(listener);
+    public void setToolPanelListeners(ToolPanelListener listener0, EditorModeListener listener1) {
+        this.toolListener = listener0;
+        this.modeListener = listener1;
+        addPanel.setToolPanelListener(listener0);
+        modeListener.onAddMode(); //esto se debe modificar
     }
 }

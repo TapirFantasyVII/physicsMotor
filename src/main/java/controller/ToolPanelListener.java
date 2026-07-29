@@ -9,5 +9,5 @@ public interface ToolPanelListener {
             double mass,
             Color color
     );
-
+    
 }

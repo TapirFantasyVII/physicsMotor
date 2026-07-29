@@ -9,5 +9,6 @@ public class DebugRenderer {
     public static boolean SHOW_BOUNDS = true;
 
     public static boolean SHOW_AXIS = true;
-
+    
+    public static boolean SHOW_BODY_DEBUG = true;
 }

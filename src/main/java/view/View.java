@@ -66,5 +66,8 @@ public class View extends JFrame implements FigureListener {
     public ToolPanel getToolPanel() {
         return toolPanel;
     }
-    
+
+    public CanvasPanel getCanvas() {
+        return canvas;
+    }    
 }

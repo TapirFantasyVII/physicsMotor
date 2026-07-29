@@ -6,7 +6,7 @@ import javax.swing.Timer;
 import model.Model;
 import view.View;
 
-public class Controller implements ToolPanelListener {
+public class Controller implements ToolPanelListener, EditorModeListener, CanvasListener {
 
     private final Model model;
     private final View view;
@@ -19,7 +19,8 @@ public class Controller implements ToolPanelListener {
         this.model = model;
         this.view = view;
 
-        view.getToolPanel().setToolPanelListener(this);
+        view.getToolPanel().setToolPanelListeners(this,this);
+        view.getCanvas().setCanvasListener(this);
 
         loopTimer = new Timer(16, e -> update());
     }
@@ -38,8 +39,8 @@ public class Controller implements ToolPanelListener {
     }
 
     @Override
-    public void onCreateCircle(  int radius, double mass, Color color) {
-        model.addCircle(0, 0, color, radius, mass);
+    public void onCreateCircle(int radius, double mass, Color color) {
+        model.addCircle(color, radius, mass);
     }
 
     public void startMotor() {
@@ -47,4 +48,38 @@ public class Controller implements ToolPanelListener {
         loopTimer.start();
     }
 
+    @Override
+    public void onAddMode() {
+        System.out.println("add");
+        model.startAddMode();
+    }
+
+    @Override
+    public void onModifyMode() {
+        System.out.println("modify");
+        model.startModifyMode();
+    }
+
+    @Override
+    public void onDeleteMode() {
+        System.out.println("delete");
+        model.startDeleteMode();
+    }
+
+    @Override
+    public void onExitMode() {
+        System.out.println("none");
+        model.stopEditorMode();
+    }
+    
+    @Override
+    public void onModifyWorld(){
+        System.out.println("world");
+        model.startWorldEditor();
+    }
+
+    @Override
+    public void onCanvasClicked(int x, int y) {
+        model.actCursorPosition(x, y);
+    }
 }

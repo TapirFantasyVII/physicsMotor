@@ -16,14 +16,7 @@ public class Circle extends Figure {
         setSize(radio * 2, radio * 2);
 
     }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.setColor(getColor());
-        g.fillOval(0, 0, radio * 2, radio * 2);
-    }
-
+ 
     public double getRadio() {
         return radio;
     }

@@ -9,6 +9,7 @@ public abstract class Body {
     private double width;
     private double height;
     private double mass;
+    private int rotation = 0;
     private boolean grounded = false;
 
     World world; // pertenece a un mundo
@@ -69,6 +70,17 @@ public abstract class Body {
         }
     }
 
+    public void trySleep() {
+
+        if (Math.abs(velocity.x) < PhysicsConfig.MIN_TO_SLEEP) {
+            velocity.x = 0;
+        }
+
+        if (Math.abs(velocity.y) <  PhysicsConfig.MIN_TO_SLEEP) {
+            velocity.y = 0;
+        }
+    }
+
     // getters
     public double getX() {
         return position.x;
@@ -109,4 +121,13 @@ public abstract class Body {
 
     public void resolveCollision(Body other) {
     }
+
+    public int getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(int rotation) {
+        this.rotation = rotation;
+    }
+
 }
