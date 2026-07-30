@@ -40,22 +40,91 @@ public class Model {
     }
 
     public void actEstate(double dt) {
+
         animation++;
+
+        // ============================================================
+        // FASE 1: Aplicar fuerzas e integrar movimiento
+        // ============================================================
         for (Figure f : figures) {
+
+            // Gravedad
             f.applyForce(world.getGravity().scale(f.getMass()));
-            f.applyFriction();
+
+            // Integración (Euler)
             f.integrate(dt);
-            f.getBody().trySleep();
+        }
+
+        // ============================================================
+        // FASE 2: Resolver colisiones con los límites del mundo
+        // ============================================================
+        for (Figure f : figures) {
+
             f.resolveWorldBounds(
                     (int) world.getWidth(),
                     (int) world.getHeight(),
                     world.getRestitution());
         }
 
-        for (int i = 0; i < figures.size(); i++) {
-            for (int j = i + 1; j < figures.size(); j++) {
-                figures.get(i).resolveCollision(figures.get(j));
+        // ============================================================
+        // FASE 3: Solver de colisiones
+        // ============================================================
+        final int ITERATIONS = PhysicsConfig.COLISION_SOLVER_ITERATIONS;
+
+        for (int k = 0; k < ITERATIONS; k++) {
+
+            boolean reverse = ((animation + k) & 1) == 1;
+
+            // ----------------------------
+            // 3.1 Corregir penetraciones
+            // ----------------------------
+            if (!reverse) {
+
+                for (int i = 0; i < figures.size(); i++) {
+                    for (int j = i + 1; j < figures.size(); j++) {
+                        figures.get(i).resolvePosition(figures.get(j));
+                    }
+                }
+
+            } else {
+
+                for (int i = figures.size() - 1; i >= 0; i--) {
+                    for (int j = i - 1; j >= 0; j--) {
+                        figures.get(i).resolvePosition(figures.get(j));
+                    }
+                }
+
             }
+
+            // ----------------------------
+            // 3.2 Resolver velocidades
+            // ----------------------------
+            if (!reverse) {
+
+                for (int i = 0; i < figures.size(); i++) {
+                    for (int j = i + 1; j < figures.size(); j++) {
+                        figures.get(i).resolveVelocity(figures.get(j));
+                    }
+                }
+
+            } else {
+
+                for (int i = figures.size() - 1; i >= 0; i--) {
+                    for (int j = i - 1; j >= 0; j--) {
+                        figures.get(i).resolveVelocity(figures.get(j));
+                    }
+                }
+
+            }
+        }
+
+        // ============================================================
+        // FASE 4: Fricción y reposo
+        // ============================================================
+        for (Figure f : figures) {
+
+            f.applyFriction();
+            f.getBody().trySleep();
         }
     }
 
@@ -100,7 +169,7 @@ public class Model {
 
     public void addCircle(Color color, int rad, double weight) {
         addFigure(
-                new Circle(world, editorCursor.getWorldX()-rad, editorCursor.getWorldY()-rad, color,
+                new Circle(world, editorCursor.getWorldX() - rad, editorCursor.getWorldY() - rad, color,
                         rad, weight, "circle_" + figureCnt)
         );
     }

@@ -43,13 +43,20 @@ public abstract class Figure extends JPanel {
         setLocation((int) Math.round(body.getX()), (int) Math.round(body.getY()));
     }
 
-    public void resolveCollision(Figure other) {
+    public void resolvePosition(Figure other) {
+
         if (other != this) {
-            body.resolveCollision(other.getBody());
-            this.syncViewPosition();
+            body.resolvePosition(other.getBody());
+            syncViewPosition();
             other.syncViewPosition();
         }
+    }
 
+    public void resolveVelocity(Figure other) {
+
+        if (other != this) {
+            body.resolveVelocity(other.getBody());
+        }
     }
 
     public double getMass() {

@@ -76,7 +76,7 @@ public abstract class Body {
             velocity.x = 0;
         }
 
-        if (Math.abs(velocity.y) <  PhysicsConfig.MIN_TO_SLEEP) {
+        if (Math.abs(velocity.y) < PhysicsConfig.MIN_TO_SLEEP) {
             velocity.y = 0;
         }
     }
@@ -130,4 +130,9 @@ public abstract class Body {
         this.rotation = rotation;
     }
 
+    public void resolvePosition(Body other) {
+    }
+
+    public void resolveVelocity(Body other) {
+    }
 }

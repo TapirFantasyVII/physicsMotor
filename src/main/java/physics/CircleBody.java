@@ -26,27 +26,32 @@ public class CircleBody extends Body {
     @Override
     public void resolveCollision(Body other) {
 
-        if (other instanceof CircleBody) {
-            resolveCollision_CircleToCircle((CircleBody) other);
+        if (!(other instanceof CircleBody circle)) {
+            return;
         }
 
+        resolvePosition(circle);
+        resolveVelocity(circle);
     }
-
-    public void resolveCollision_CircleToCircle(CircleBody other) {
-
+    @Override
+    public void resolvePosition(Body Cother) {
+        CircleBody other = (CircleBody) Cother;
         double dx = other.getCenterX() - this.getCenterX();
         double dy = other.getCenterY() - this.getCenterY();
+
         double distSq = dx * dx + dy * dy;
         double sumRadii = this.radius + other.radius;
 
         if (distSq >= sumRadii * sumRadii) {
-            return; // no colisionan
+            return;
         }
-        System.out.println("circle Collision");
-        double distance = Math.sqrt(distSq);
-        double nx, ny;
-        if (distance < 1e-6) {
 
+        double distance = Math.sqrt(distSq);
+
+        double nx;
+        double ny;
+
+        if (distance < 1e-6) {
             nx = 1;
             ny = 0;
             distance = 0.0001;
@@ -54,29 +59,43 @@ public class CircleBody extends Body {
             nx = dx / distance;
             ny = dy / distance;
         }
-        // Corrección de penetración (Position Correction)
-        // Evita vibraciones corrigiendo solo una parte del solapamiento.
 
         double overlap = sumRadii - distance;
 
-        double slop = 0.01;      // Penetración permitida
-        double percent = 0.8;    // Corregir solo el 80%
+        double correction
+                = Math.max(overlap - PhysicsConfig.COLISION_PENETRATION, 0.0)
+                * PhysicsConfig.COLISION_CORRECTION;
 
-        double correction = Math.max(overlap - slop, 0.0) * percent;
+        double totalMass = getMass() + other.getMass();
 
-        double totalMass = this.getMass() + other.getMass();
+        double moveThis = correction * other.getMass() / totalMass;
+        double moveOther = correction * getMass() / totalMass;
 
-        double moveThis = correction * (other.getMass() / totalMass);
-        double moveOther = correction * (this.getMass() / totalMass);
-
-        this.translate(-nx * moveThis, -ny * moveThis);
+        translate(-nx * moveThis, -ny * moveThis);
         other.translate(nx * moveOther, ny * moveOther);
+    }
+    
+    @Override
+    public void resolveVelocity(Body Cother) {
+        CircleBody other = (CircleBody) Cother;
+        double dx = other.getCenterX() - this.getCenterX();
+        double dy = other.getCenterY() - this.getCenterY();
 
-        Vector2d v1 = this.getVelocity();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 1e-6) {
+            return;
+        }
+
+        double nx = dx / distance;
+        double ny = dy / distance;
+
+        Vector2d v1 = getVelocity();
         Vector2d v2 = other.getVelocity();
 
         double rvx = v2.x - v1.x;
         double rvy = v2.y - v1.y;
+
         double velAlongNormal = rvx * nx + rvy * ny;
 
         if (velAlongNormal > 0) {
@@ -85,18 +104,22 @@ public class CircleBody extends Body {
 
         double restitution = world.getRestitution();
 
-// Si el impacto es muy pequeño, no rebotar.
         if (Math.abs(velAlongNormal) < 0.5) {
-            restitution = 0.0;
+            restitution = 0;
         }
 
         double j = -(1 + restitution) * velAlongNormal;
-        j /= (1 / this.getMass() + 1 / other.getMass());
+        j /= (1 / getMass() + 1 / other.getMass());
 
         double impulseX = j * nx;
         double impulseY = j * ny;
 
-        this.setVelocity(new Vector2d(v1.x - impulseX / this.getMass(), v1.y - impulseY / this.getMass()));
-        other.setVelocity(new Vector2d(v2.x + impulseX / other.getMass(), v2.y + impulseY / other.getMass()));
+        setVelocity(new Vector2d(
+                v1.x - impulseX / getMass(),
+                v1.y - impulseY / getMass()));
+
+        other.setVelocity(new Vector2d(
+                v2.x + impulseX / other.getMass(),
+                v2.y + impulseY / other.getMass()));
     }
 }
