@@ -1,33 +1,38 @@
 package forms;
 
-import java.awt.*;
-import javax.swing.JPanel;
-
+import java.awt.Color;
 import physics.CircleBody;
 import physics.World;
 
 public class Circle extends Figure {
-    private int radio;
 
-    public Circle(World world, int x, int y, Color color, int radio, double weight , String id) {
-        super(x, y, color, id);
-        this.body = new CircleBody(world, x, y, radio, weight);
-        this.radio = radio;
-        setSize(radio * 2, radio * 2);
+    public Circle(
+            World world,
+            int x,
+            int y,
+            Color color,
+            double radius,
+            double mass,
+            String id) {
 
+        super(
+                new CircleBody(world, x, y, radius, mass),
+                color,
+                id
+        );
     }
- 
-    public double getRadio() {
-        return radio;
+
+    @Override
+    public CircleBody getBody() {
+        return (CircleBody) super.getBody();
     }
 
-    public void setRadio(int radio) {
-        this.radio = radio;
+    public double getRadius() {
+        return getBody().getRadius();
     }
 
     @Override
     public String toString() {
-        return super.toString() + "type=circle " + "radio=" + radio;
+        return super.toString() + " type=circle radius=" + getRadius();
     }
-
 }

@@ -8,80 +8,61 @@ public abstract class Body {
 
     private double width;
     private double height;
+
     private double mass;
-    private int rotation = 0;
-    private boolean grounded = false;
 
-    World world; // pertenece a un mundo
+    private double rotation;
 
-    public Body(World world, double x, double y, double width, double height, double mass) {
+    private final World world;
+
+    protected Body(World world,
+                   double x,
+                   double y,
+                   double width,
+                   double height,
+                   double mass) {
+
+        this.world = world;
+
         this.position = new Vector2d(x, y);
+
         this.width = width;
         this.height = height;
+
         this.mass = mass;
-        this.world = world;
     }
 
-    public void applyForce(Vector2d f) {
-        forceAccum = forceAccum.add(f);
+    //=====================================================
+    // Integración
+    //=====================================================
+
+    public void applyForce(Vector2d force) {
+        forceAccum = forceAccum.add(force);
     }
 
     public void integrate(double dt) {
+
         Vector2d acceleration = forceAccum.scale(1.0 / mass);
+
         velocity = velocity.add(acceleration.scale(dt));
+
         position = position.add(velocity.scale(dt));
+
         forceAccum = Vector2d.zero();
     }
 
-    public void resolveWorldBounds(double worldWidth, double worldHeight, double restitution) {
-        if (position.x < 0) {
-            position.x = 0;
-            velocity.x = -velocity.x * restitution;
-        } else if (position.x + width > worldWidth) {
-            position.x = worldWidth - width;
-            velocity.x = -velocity.x * restitution;
-        }
+    //=====================================================
+    // Movimiento
+    //=====================================================
 
-        if (position.y < 0) {
-            position.y = 0;
-            velocity.y = -velocity.y * restitution;
-        } else if (position.y + height > worldHeight) {
-            position.y = worldHeight - height;
-            velocity.y = -velocity.y * restitution;
-        }
-
-        updateGroundedState(worldHeight);
+    public void translate(double dx, double dy) {
+        position = position.add(new Vector2d(dx, dy));
     }
 
-    private void updateGroundedState(double worldHeight) {
-        double epsilon = 0.5;
-        grounded = (position.y + height >= worldHeight - epsilon);
-    }
+    //=====================================================
+    // Getters
+    //=====================================================
 
-    public void applyFriction() {
-        if (grounded) {
-            double frictionForceX = -velocity.x * world.getGroundFriction();
-            applyForce(new Vector2d(frictionForceX, 0));
-            if (Math.abs(velocity.x) < 0.5) {
-                velocity.x = 0;
-            }
-        } else {
-            applyForce(velocity.scale(-world.getAirFriction()));
-        }
-    }
-
-    public void trySleep() {
-
-        if (Math.abs(velocity.x) < PhysicsConfig.MIN_TO_SLEEP) {
-            velocity.x = 0;
-        }
-
-        if (Math.abs(velocity.y) < PhysicsConfig.MIN_TO_SLEEP) {
-            velocity.y = 0;
-        }
-    }
-
-    // getters
     public double getX() {
         return position.x;
     }
@@ -102,37 +83,37 @@ public abstract class Body {
         return mass;
     }
 
-    public boolean isGrounded() {
-        return grounded;
+    public double getWidth() {
+        return width;
     }
 
-    public void setSize(double width, double height) {
-        this.width = width;
-        this.height = height;
+    public double getHeight() {
+        return height;
     }
+
+    public double getRotation() {
+        return rotation;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    //=====================================================
+    // Setters
+    //=====================================================
 
     public void setVelocity(Vector2d velocity) {
         this.velocity = velocity;
     }
 
-    public void translate(double dx, double dy) {
-        this.position = position.add(new Vector2d(dx, dy));
-    }
-
-    public void resolveCollision(Body other) {
-    }
-
-    public int getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(int rotation) {
+    public void setRotation(double rotation) {
         this.rotation = rotation;
     }
 
-    public void resolvePosition(Body other) {
+    public void setSize(double width,double height){
+        this.width = width;
+        this.height = height;
     }
 
-    public void resolveVelocity(Body other) {
-    }
 }

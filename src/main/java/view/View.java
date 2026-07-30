@@ -44,7 +44,7 @@ public class View extends JFrame implements FigureListener {
 
     @Override
     public void onFigureAdded(Figure figure) {
-        canvas.add(figure);
+ 
         canvas.repaint();
     }
 

@@ -6,61 +6,16 @@ import physics.Body;
 import physics.PhysicsConfig;
 import physics.Vector2d;
 
-public abstract class Figure extends JPanel {
+public abstract class Figure {
 
-    private Color color;
-    private String id;
-    protected Body body;
+    private final String id;
+    private final Color color;
+    protected final Body body;
 
-    public Figure(int x, int y, Color color, String id) {
-        this.body = null;
-        this.id = id;
+    protected Figure(Body body, Color color, String id) {
+        this.body = body;
         this.color = color;
-        setLocation(x, y);
-        setOpaque(false);
-    }
-
-    // --- delegación a Body ---
-    public void applyForce(Vector2d f) {
-        body.applyForce(f);
-    }
-
-    public void integrate(double dt) {
-        body.integrate(dt);
-        syncViewPosition();
-    }
-
-    public void resolveWorldBounds(int worldWidth, int worldHeight, double restitution) {
-        body.resolveWorldBounds(worldWidth, worldHeight, restitution);
-        syncViewPosition();
-    }
-
-    public void applyFriction() {
-        body.applyFriction();
-    }
-
-    private void syncViewPosition() {
-        setLocation((int) Math.round(body.getX()), (int) Math.round(body.getY()));
-    }
-
-    public void resolvePosition(Figure other) {
-
-        if (other != this) {
-            body.resolvePosition(other.getBody());
-            syncViewPosition();
-            other.syncViewPosition();
-        }
-    }
-
-    public void resolveVelocity(Figure other) {
-
-        if (other != this) {
-            body.resolveVelocity(other.getBody());
-        }
-    }
-
-    public double getMass() {
-        return body.getMass();
+        this.id = id;
     }
 
     public Body getBody() {
@@ -71,13 +26,7 @@ public abstract class Figure extends JPanel {
         return color;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    @Override
-    public String toString() {
-        return "ID= " + id + " color=R" + color.getRed() + " G" + color.getGreen() + " B" + color.getBlue()
-                + " pos=" + getX() + " , " + getY() + " | ";
+    public String getId() {
+        return id;
     }
 }
